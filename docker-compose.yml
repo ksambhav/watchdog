@@ -55,3 +55,7 @@ services:
     - agent
     - -data-dir=/var/data/consul-ca
     - -retry-join=cs2
+  my-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
