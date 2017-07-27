@@ -1,0 +1,57 @@
+version: '3.1'
+services:
+  cs1:
+    image: consul:0.9.0
+    ports:
+    - "8300:8300" #Server RPC
+    - "8301:8301" #Serf LAN
+    - "8302:8302" #Serf WAN
+    - "8400:8400" #CLI RPC
+    - "8500:8500" #HTTP API
+    - "8600:8600" #DNS Interface
+    entrypoint:
+    - consul
+    - agent
+    - -server
+    - -data-dir=/var/data/consul-1
+    - -bootstrap-expect=3
+    - -ui
+  cs2:
+    image: consul:0.9.0
+    ports:
+    - "7300:8300" #Server RPC
+    - "7301:8301" #Serf LAN
+    - "7302:8302" #Serf WAN
+    - "7400:8400" #CLI RPC
+    - "7500:8500" #HTTP API
+    - "7600:8600" #DNS Interface
+    entrypoint:
+    - consul
+    - agent
+    - -server
+    - -data-dir=/var/data/consul-2
+    - -bootstrap-expect=3
+    - -retry-join=cs1
+  cs3:
+    image: consul:0.9.0
+    ports:
+    - "6300:8300" #Server RPC
+    - "6301:8301" #Serf LAN
+    - "6302:8302" #Serf WAN
+    - "6400:8400" #CLI RPC
+    - "6500:8500" #HTTP API
+    - "6600:8600" #DNS Interface
+    entrypoint:
+    - consul
+    - agent
+    - -server
+    - -data-dir=/var/data/consul-3
+    - -bootstrap-expect=3
+    - -retry-join=cs2
+  ca1:
+    image: consul:0.9.0
+    entrypoint:
+    - consul
+    - agent
+    - -data-dir=/var/data/consul-ca
+    - -retry-join=cs2
