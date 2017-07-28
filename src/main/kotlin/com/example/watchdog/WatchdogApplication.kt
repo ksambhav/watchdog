@@ -21,7 +21,7 @@ class WatchdogApplication : CommandLineRunner {
     override fun run(vararg args: String?) {
         log.debug("service started will register to consul now")
 
-        val agentHost = "cs1"
+        val agentHost = "consul"
         val agentPort = 8500
 
         val client = getClient(agentHost, agentPort)
