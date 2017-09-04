@@ -8,40 +8,45 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.system.ApplicationPidFileWriter
 import java.util.*
 
 
 @SpringBootApplication
-class WatchdogApplication : CommandLineRunner {
+open class WatchdogApplication : CommandLineRunner {
 
     companion object {
         val log = LoggerFactory.getLogger(WatchdogApplication::class.java)
     }
 
     override fun run(vararg args: String?) {
-        log.debug("service started will register to consul now")
 
-        val agentHost = "consul"
-        val agentPort = 8500
+        try {
+            log.debug("service started will register to consul now")
 
-        val client = getClient(agentHost, agentPort)
-        log.debug("consul client created")
+            val agentHost = "consul"
+            val agentPort = 8500
 
-        // register feed service
-        val service = NewService()
-        service.id = "feed"
-        service.name = "feed"
-        service.tags = Arrays.asList("EU-West", "EU-East")
-        service.port = 8081
-        registerService(client, service)
-        client.agentServiceRegister(service)
+            val client = getClient(agentHost, agentPort)
+            log.debug("consul client created")
 
-        log.debug("service is now registered")
+            // register feed service
+            val service = NewService()
+            service.id = "feed"
+            service.name = "feed"
+            service.tags = Arrays.asList("EU-West", "EU-East")
+            service.port = 8081
+            registerService(client, service)
+            client.agentServiceRegister(service)
 
-        val catalogService = client.getCatalogService("feed", QueryParams.DEFAULT)
+            log.debug("service is now registered")
 
-        log.debug("regstered service from consul is ${catalogService.toString()}")
+            val catalogService = client.getCatalogService("feed", QueryParams.DEFAULT)
 
+            log.debug("regstered service from consul is ${catalogService.toString()}")
+        } catch (throwable: Throwable) {
+            log.error("error while registering service", throwable)
+        }
     }
 }
 
@@ -55,5 +60,7 @@ fun registerService(client: ConsulClient, service: NewService): Response<Void> {
 
 
 fun main(args: Array<String>) {
-    SpringApplication.run(WatchdogApplication::class.java, *args)
+    val application = SpringApplication(WatchdogApplication::class.java)
+    application.addListeners(ApplicationPidFileWriter("watchdog.pid"))
+    application.run(*args)
 }
