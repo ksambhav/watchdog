@@ -10,7 +10,7 @@ import java.util.*
  * @since  7/14/2017.
  */
 @RestController
-open class Controller {
+class Controller {
 
     companion object {
         val log = LoggerFactory.getLogger(Controller::class.java)
