@@ -28,6 +28,6 @@ class Controller {
             2 -> log.error("cloudwatch should see this $s")
         }
 
-        return mapOf("Hello" to "World $s")
+        return mapOf("Hello" to "World $s Green Deployement")
     }
 }

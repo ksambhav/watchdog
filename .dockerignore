@@ -1,4 +1,4 @@
-.gradle
+*.gradle
 .idea
 gradle
 node_modules
@@ -6,6 +6,9 @@ src
 static
 *.bat
 *.jar
+*.iml
+out
+*.pid
 build/classes
 build/distributions
 build/tmp
