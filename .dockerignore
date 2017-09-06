@@ -1,0 +1,12 @@
+.gradle
+.idea
+gradle
+node_modules
+src
+static
+*.bat
+*.jar
+build/classes
+build/distributions
+build/tmp
+build/kotlin
