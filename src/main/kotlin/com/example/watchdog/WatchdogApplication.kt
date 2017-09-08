@@ -6,7 +6,7 @@ import org.springframework.boot.system.ApplicationPidFileWriter
 
 
 @SpringBootApplication
-open class WatchdogApplication
+class WatchdogApplication
 
 fun main(args: Array<String>) {
     val application = SpringApplication(WatchdogApplication::class.java)
