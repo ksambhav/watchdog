@@ -11,6 +11,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
         classpath 'com.bmuschko:gradle-docker-plugin:3.1.0'
+        classpath 'net.researchgate:gradle-release:2.4.0'
     }
 }
 
@@ -20,8 +21,9 @@ apply plugin: 'application'
 mainClassName = 'com.example.watchdog.WatchdogApplicationKt'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'net.researchgate.release'
 
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 sourceCompatibility = 1.8
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
@@ -64,19 +66,22 @@ docker {
 }
 
 
+import com.bmuschko.gradle.docker.tasks.DockerInfo
 import com.bmuschko.gradle.docker.tasks.DockerVersion
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 
 task dockerVersion(type: DockerVersion)
+task dockerInfo(type: DockerInfo)
+
 
 task dbuild(type: DockerBuildImage) {
     dependsOn build
     inputDir = file(".")
-    tag "ksambhav/watchdog:latest"
+    tag "ksambhav/${project.name}:latest"
 }
 
 
-task dpush(type : DockerPushImage){
-    imageName "ksambhav/watchdog"
+task dpush(type: DockerPushImage) {
+    imageName "ksambhav/${project.name}:latest"
 }
