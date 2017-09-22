@@ -10,6 +10,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath 'com.bmuschko:gradle-docker-plugin:3.1.0'
     }
 }
 
@@ -18,6 +19,7 @@ apply plugin: 'kotlin-spring'
 apply plugin: 'application'
 mainClassName = 'com.example.watchdog.WatchdogApplicationKt'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'com.bmuschko.docker-remote-api'
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -33,7 +35,6 @@ repositories {
 }
 
 dependencies {
-   // compile('com.ecwid.consul:consul-api:1.2.3')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
@@ -54,3 +55,28 @@ distributions {
 }
 
 defaultTasks 'build'
+
+docker {
+    if (System.env.containsKey('DOCKER_HOST') && System.env.containsKey('DOCKER_CERT_PATH')) {
+        url = System.env.DOCKER_HOST.replace("tcp", "https")
+        certPath = new File(System.env.DOCKER_CERT_PATH)
+    }
+}
+
+
+import com.bmuschko.gradle.docker.tasks.DockerVersion
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+
+task dockerVersion(type: DockerVersion)
+
+task dbuild(type: DockerBuildImage) {
+    dependsOn build
+    inputDir = file(".")
+    tag "ksambhav/watchdog:latest"
+}
+
+
+task dpush(type : DockerPushImage){
+    imageName "ksambhav/watchdog"
+}
