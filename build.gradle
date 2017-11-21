@@ -33,6 +33,15 @@ mainClassName = 'com.example.watchdog.WatchdogApplicationKt'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'com.bmuschko.docker-remote-api'
 
+
+
+release {
+    failOnCommitNeeded = false
+    failOnPublishNeeded = false
+    failOnSnapshotDependencies = false
+    failOnUnversionedFiles = false
+    failOnUpdateNeeded = false
+}
 version = projectVersion
 sourceCompatibility = 1.8
 compileKotlin {
